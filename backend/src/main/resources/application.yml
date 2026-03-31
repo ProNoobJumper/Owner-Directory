@@ -1,0 +1,40 @@
+server:
+  port: 8080
+
+spring:
+  data:
+    mongodb:
+      uri: ${MONGO_URI:mongodb://localhost:27017/owner_directory}
+      auto-index-creation: true
+  
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+app:
+  solr:
+    url: ${SOLR_URL:http://localhost:8983/solr}
+  upload:
+    dir: ${UPLOAD_DIR:./uploads}
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
+
+# SECURITY: Actuator endpoint configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+
+# Logging configuration
+logging:
+  level:
+    root: INFO
+    com.project.directory: DEBUG
+    org.springframework: WARN
+    org.apache.solr: WARN
+

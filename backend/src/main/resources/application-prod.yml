@@ -1,0 +1,24 @@
+# Production Profile Configuration
+# Use with: java -jar app.jar --spring.profiles.active=prod
+
+spring:
+  data:
+    mongodb:
+      uri: ${MONGO_URI}
+      auto-index-creation: false  # Indexes should be managed via migration scripts
+
+logging:
+  level:
+    root: WARN
+    com.project.directory: INFO
+    org.springframework: WARN
+    org.apache.solr: WARN
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never

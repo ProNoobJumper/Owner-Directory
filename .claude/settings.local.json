@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc:*)",
+      "Bash(find:*)",
+      "Bash(npm install:*)",
+      "Bash(npx vite:*)",
+      "Bash(mvn compile:*)",
+      "Bash(mvn clean:*)",
+      "Bash(./mvnw compile:*)",
+      "Bash(mvn test:*)",
+      "Bash(npm run:*)"
+    ]
+  }
+}
