@@ -18,12 +18,20 @@ export default async function Home({
   const p = typeof params.p === "string" ? parseInt(params.p, 10) : 1;
 
   const hasFilters = q || (c && c !== "all");
-  const res = hasFilters
-    ? await api.searchOwners(q, c === "all" ? "" : c, p - 1, 6)
-    : await api.getOwners(p - 1, 6);
-  const owners = res.content;
-  const totalPages = res.totalPages;
-  const totalElements = res.totalElements;
+  let owners: Awaited<ReturnType<typeof api.getOwners>>["content"] = [];
+  let totalPages = 0;
+  let totalElements = 0;
+
+  try {
+    const res = hasFilters
+      ? await api.searchOwners(q, c === "all" ? "" : c, p - 1, 6)
+      : await api.getOwners(p - 1, 6);
+    owners = res.content;
+    totalPages = res.totalPages;
+    totalElements = res.totalElements;
+  } catch {
+    // Backend unavailable — render page with empty data
+  }
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
