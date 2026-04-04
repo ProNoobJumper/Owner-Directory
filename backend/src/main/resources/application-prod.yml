@@ -5,6 +5,7 @@ spring:
   data:
     mongodb:
       uri: ${MONGO_URI}
+      database: ${MONGO_DATABASE:owner_directory}
       auto-index-creation: false  # Indexes should be managed via migration scripts
 
 app:
