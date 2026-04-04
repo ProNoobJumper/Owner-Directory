@@ -31,7 +31,9 @@ export interface PageResponse<T> {
 
 const getApiBaseUrl = () => {
   if (typeof window === 'undefined') {
-    return process.env.API_URL || 'http://localhost:8080/api';
+    // Server-side: use internal API_URL if set, otherwise fall back to the public URL
+    const base = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    return base.replace(/\/$/, '') + '/api';
   }
   return '/api';
 };

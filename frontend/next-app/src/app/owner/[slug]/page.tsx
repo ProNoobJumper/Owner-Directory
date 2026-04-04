@@ -16,7 +16,12 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   try {
-    const owner = await api.getOwnerBySlug(slug);
+    let owner;
+    try {
+      owner = await api.getOwnerBySlug(slug);
+    } catch {
+      owner = await api.getOwnerById(slug);
+    }
     return {
       title: owner.metaTitle || owner.businessName,
       description: owner.metaDescription || owner.description.substring(0, 160),
@@ -24,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         images: owner.ogImage ? [owner.ogImage] : undefined,
       },
     };
-  } catch (e) {
+  } catch {
     return {
       title: "Professional Not Found | Owner Directory",
     };
@@ -37,8 +42,13 @@ export default async function OwnerPage({ params }: Props) {
 
   try {
     owner = await api.getOwnerBySlug(slug);
-  } catch (error) {
-    notFound();
+  } catch {
+    // slug lookup failed — try treating it as a MongoDB ID
+    try {
+      owner = await api.getOwnerById(slug);
+    } catch {
+      notFound();
+    }
   }
 
   return (
