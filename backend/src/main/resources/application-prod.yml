@@ -7,6 +7,12 @@ spring:
       uri: ${MONGO_URI}
       auto-index-creation: false  # Indexes should be managed via migration scripts
 
+app:
+  solr:
+    url: ${SOLR_URL:http://localhost:8983/solr}
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
+
 logging:
   level:
     root: WARN
