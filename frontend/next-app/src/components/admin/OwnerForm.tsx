@@ -383,18 +383,29 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
         <div>
           <div className="flex items-center justify-between mb-1">
             <Label htmlFor="image">Image *</Label>
-            <div className="flex gap-2 text-xs">
+            <div className="flex" style={{ border: "1px solid var(--border)" }}>
               <button
                 type="button"
                 onClick={() => setUploadMode('url')}
-                className={`px-2 py-0.5 rounded-full transition-colors ${uploadMode === 'url' ? 'bg-violet-600 text-white' : 'text-slate-500 hover:text-violet-600'}`}
+                className="px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider transition-colors"
+                style={{
+                  backgroundColor: uploadMode === 'url' ? 'var(--primary)' : 'transparent',
+                  color: uploadMode === 'url' ? 'var(--primary-foreground)' : 'var(--muted-foreground)',
+                  borderRight: '1px solid var(--border)',
+                  fontFamily: 'var(--font-sans)',
+                }}
               >
                 URL
               </button>
               <button
                 type="button"
                 onClick={() => setUploadMode('file')}
-                className={`px-2 py-0.5 rounded-full transition-colors ${uploadMode === 'file' ? 'bg-violet-600 text-white' : 'text-slate-500 hover:text-violet-600'}`}
+                className="px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider transition-colors"
+                style={{
+                  backgroundColor: uploadMode === 'file' ? 'var(--primary)' : 'transparent',
+                  color: uploadMode === 'file' ? 'var(--primary-foreground)' : 'var(--muted-foreground)',
+                  fontFamily: 'var(--font-sans)',
+                }}
               >
                 Upload
               </button>
@@ -435,11 +446,11 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
                 }}
               />
               {uploading ? (
-                <p className="text-violet-600 text-sm font-medium">Uploading...</p>
+                <p className="text-sm font-medium" style={{ color: "var(--primary)" }}>Uploading...</p>
               ) : imageUrl && uploadMode === 'file' && imageUrl.startsWith('/uploads') ? (
                 <div className="space-y-2">
-                  <img src={imageUrl} alt="Preview" className="h-24 mx-auto rounded-lg object-cover" />
-                  <p className="text-green-600 text-xs font-medium">Uploaded successfully</p>
+                  <img src={imageUrl} alt="Preview" className="h-24 mx-auto object-cover" />
+                  <p className="text-xs font-bold uppercase tracking-wider" style={{ color: "var(--primary)" }}>Uploaded</p>
                   <p className="text-xs" style={{ color: "var(--muted-foreground)" }}>Click to replace</p>
                 </div>
               ) : (
@@ -458,20 +469,21 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="rating">Rating *</Label>
-            <Input
+            <StepperInput
               id="rating"
-              type="number"
-              step="0.1"
-              min="0"
-              max="5"
-              {...register('rating', {
-                required: 'Rating is required',
-                min: { value: 0, message: 'Rating must be at least 0' },
-                max: { value: 5, message: 'Rating cannot exceed 5' },
-                valueAsNumber: true
-              })}
-              placeholder="4.5"
+              value={watch('rating')}
+              step={0.1}
+              min={0}
+              max={5}
+              decimals={1}
+              onChange={(v) => setValue('rating', v, { shouldValidate: true })}
             />
+            <input type="hidden" {...register('rating', {
+              required: 'Rating is required',
+              min: { value: 0, message: 'Rating must be at least 0' },
+              max: { value: 5, message: 'Rating cannot exceed 5' },
+              valueAsNumber: true
+            })} />
             {errors.rating && (
               <p className="text-xs mt-1 font-medium" style={{ color: "var(--destructive)" }}>{errors.rating.message}</p>
             )}
@@ -479,17 +491,19 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
 
           <div>
             <Label htmlFor="reviewCount">Review Count *</Label>
-            <Input
+            <StepperInput
               id="reviewCount"
-              type="number"
-              min="0"
-              {...register('reviewCount', {
-                required: 'Review count is required',
-                min: { value: 0, message: 'Review count must be at least 0' },
-                valueAsNumber: true
-              })}
-              placeholder="100"
+              value={watch('reviewCount')}
+              step={1}
+              min={0}
+              decimals={0}
+              onChange={(v) => setValue('reviewCount', v, { shouldValidate: true })}
             />
+            <input type="hidden" {...register('reviewCount', {
+              required: 'Review count is required',
+              min: { value: 0, message: 'Review count must be at least 0' },
+              valueAsNumber: true
+            })} />
             {errors.reviewCount && (
               <p className="text-xs mt-1 font-medium" style={{ color: "var(--destructive)" }}>{errors.reviewCount.message}</p>
             )}
@@ -499,6 +513,7 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
 
       {/* Submit */}
       <div className="pt-6" style={{ borderTop: "1px solid var(--border)" }}>
+
         <button
           type="submit"
           className="w-full py-3 text-xs font-bold uppercase tracking-widest transition-opacity hover:opacity-85"
@@ -512,5 +527,120 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
         </button>
       </div>
     </form>
+  );
+}
+
+function StepperInput({
+  id,
+  value,
+  step,
+  min,
+  max,
+  decimals,
+  onChange,
+}: {
+  id: string;
+  value: number;
+  step: number;
+  min: number;
+  max?: number;
+  decimals: number;
+  onChange: (v: number) => void;
+}) {
+  const dec = (v: number) => {
+    const next = Math.max(min, parseFloat((v - step).toFixed(decimals)));
+    onChange(next);
+  };
+  const inc = (v: number) => {
+    const next = max !== undefined
+      ? Math.min(max, parseFloat((v + step).toFixed(decimals)))
+      : parseFloat((v + step).toFixed(decimals));
+    onChange(next);
+  };
+
+  const btnStyle: React.CSSProperties = {
+    width: "2.25rem",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "var(--secondary)",
+    color: "var(--muted-foreground)",
+    border: "none",
+    borderLeft: "1px solid var(--border)",
+    cursor: "pointer",
+    fontSize: "1rem",
+    lineHeight: 1,
+    transition: "background-color 0.12s, color 0.12s",
+    fontFamily: "var(--font-sans)",
+    flexShrink: 0,
+    flexDirection: "column",
+    gap: 0,
+  };
+
+  return (
+    <div
+      id={id}
+      className="flex"
+      style={{ border: "1px solid var(--border)", backgroundColor: "var(--card)" }}
+    >
+      <input
+        type="text"
+        readOnly
+        value={typeof value === 'number' && !isNaN(value) ? value.toFixed(decimals) : ''}
+        className="flex-1 px-3 py-2 text-sm font-medium bg-transparent outline-none"
+        style={{ color: "var(--foreground)", fontFamily: "var(--font-sans)", minWidth: 0 }}
+      />
+      <div style={{ display: "flex", flexDirection: "column", borderLeft: "1px solid var(--border)" }}>
+        <button
+          type="button"
+          onClick={() => inc(value)}
+          disabled={max !== undefined && value >= max}
+          style={{
+            ...btnStyle,
+            borderLeft: "none",
+            borderBottom: "1px solid var(--border)",
+            height: "50%",
+            minHeight: "1.25rem",
+            flexDirection: "row",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLElement).style.backgroundColor = "var(--primary)";
+            (e.currentTarget as HTMLElement).style.color = "var(--primary-foreground)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLElement).style.backgroundColor = "var(--secondary)";
+            (e.currentTarget as HTMLElement).style.color = "var(--muted-foreground)";
+          }}
+        >
+          <svg width="8" height="5" viewBox="0 0 8 5" fill="currentColor">
+            <path d="M4 0L8 5H0L4 0Z" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          onClick={() => dec(value)}
+          disabled={value <= min}
+          style={{
+            ...btnStyle,
+            borderLeft: "none",
+            height: "50%",
+            minHeight: "1.25rem",
+            flexDirection: "row",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLElement).style.backgroundColor = "var(--primary)";
+            (e.currentTarget as HTMLElement).style.color = "var(--primary-foreground)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLElement).style.backgroundColor = "var(--secondary)";
+            (e.currentTarget as HTMLElement).style.color = "var(--muted-foreground)";
+          }}
+        >
+          <svg width="8" height="5" viewBox="0 0 8 5" fill="currentColor">
+            <path d="M4 5L0 0H8L4 5Z" />
+          </svg>
+        </button>
+      </div>
+    </div>
   );
 }
