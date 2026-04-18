@@ -1,11 +1,12 @@
-import { Search, MapPin, Star } from "lucide-react";
+import { MapPin, Star, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { api } from "@/lib/api";
-import { Badge } from "@/components/ui/badge";
 import { SearchFilters } from "@/components/SearchFilters";
 import { Pagination } from "@/components/Pagination";
 
 export const dynamic = "force-dynamic";
+
+type Owner = Awaited<ReturnType<typeof api.getOwners>>["content"][number];
 
 export default async function Home({
   searchParams,
@@ -18,7 +19,7 @@ export default async function Home({
   const p = typeof params.p === "string" ? parseInt(params.p, 10) : 1;
 
   const hasFilters = q || (c && c !== "all");
-  let owners: Awaited<ReturnType<typeof api.getOwners>>["content"] = [];
+  let owners: Owner[] = [];
   let totalPages = 0;
   let totalElements = 0;
 
@@ -30,117 +31,280 @@ export default async function Home({
     totalPages = res.totalPages;
     totalElements = res.totalElements;
   } catch {
-    // Backend unavailable — render page with empty data
+    // Backend unavailable — render with empty data
   }
 
+  const [featured, ...rest] = owners;
+
   return (
-    <div className="px-4 sm:px-6 lg:px-8">
-      {/* Hero Section */}
-      <div className="text-center py-16 md:py-24 max-w-3xl mx-auto">
-        <Badge
-          variant="outline"
-          className="mb-6 rounded-full px-4 py-1.5 shadow-sm text-violet-700 bg-violet-50 border-violet-300"
-        >
-          Trusted Business Network
-        </Badge>
-        <h1 className="text-4xl md:text-6xl font-bold text-slate-900 tracking-tight leading-tight mb-6">
-          Discover Exceptional Local{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-pink-500">
-            Professionals
-          </span>
-        </h1>
-        <p className="text-lg text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-          Connect with verified businesses and exceptional proprietors in your
-          community. Explore our premier directory today.
-        </p>
+    <div>
+      {/* Hero */}
+      <section
+        className="border-b"
+        style={{ borderColor: "var(--border)", backgroundColor: "var(--background)" }}
+      >
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 pt-16 pb-14">
+          <div className="max-w-2xl">
+            <p
+              className="text-xs font-bold uppercase tracking-[0.3em] mb-6"
+              style={{ color: "var(--primary)" }}
+            >
+              India&apos;s Business Network
+            </p>
+            <h1
+              className="font-display font-black leading-none mb-6"
+              style={{ color: "var(--foreground)" }}
+            >
+              Discover{" "}
+              <em
+                className="not-italic"
+                style={{ color: "var(--primary)", fontStyle: "italic" }}
+              >
+                Exceptional
+              </em>
+              <br />
+              Local Professionals
+            </h1>
+            <p
+              className="text-base leading-relaxed mb-10 max-w-xl"
+              style={{ color: "var(--muted-foreground)", fontWeight: 400 }}
+            >
+              Connect with verified businesses and trusted proprietors
+              across India. From artisans to enterprises — all in one place.
+            </p>
 
-        {/* Search and Filter Section (Client Component) */}
-        <SearchFilters initialQuery={q} initialCategory={c} />
-      </div>
+            <SearchFilters initialQuery={q} initialCategory={c} />
+          </div>
+        </div>
+      </section>
 
-      {/* Owner Cards Grid */}
-      <div className="max-w-6xl mx-auto pb-20">
-        <div className="flex justify-between items-end mb-8">
-          <h2 className="text-2xl font-bold text-slate-900">
-            Featured Enterprises
+      {/* Directory */}
+      <section className="max-w-7xl mx-auto px-6 sm:px-8 py-14">
+        {/* Section header */}
+        <div className="flex items-baseline justify-between mb-10 pb-4" style={{ borderBottom: "1px solid var(--border)" }}>
+          <h2
+            className="font-display font-bold"
+            style={{ color: "var(--foreground)", fontSize: "clamp(1.25rem, 2.5vw, 1.75rem)" }}
+          >
+            {hasFilters ? "Search Results" : "Featured Enterprises"}
           </h2>
-          <p className="text-sm font-medium text-slate-500">
-            Showing {owners.length} of {totalElements} listed
-          </p>
+          <span
+            className="text-xs font-semibold uppercase tracking-wider"
+            style={{ color: "var(--muted-foreground)" }}
+          >
+            {totalElements} listed
+          </span>
         </div>
 
         {owners.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-3xl border border-violet-100 shadow-sm">
-            <div className="bg-violet-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="w-8 h-8 text-violet-400" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">
-              No professionals found
-            </h3>
-            <p className="text-slate-500">
-              Try adjusting your search criteria and explore again.
-            </p>
-          </div>
+          <EmptyState />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {owners.map((owner) => (
-              <Link
-                href={`/owner/${owner.slug || owner.id}`}
-                key={owner.id}
-                className="group flex flex-col bg-white rounded-3xl border border-violet-100 shadow-sm hover:shadow-xl hover:shadow-violet-200/50 transition-all duration-300 overflow-hidden hover:-translate-y-1"
+          <>
+            {/* Magazine layout: featured hero + grid */}
+            {featured && !hasFilters && p === 1 && (
+              <FeaturedCard owner={featured} />
+            )}
+
+            {/* Rest in asymmetric grid */}
+            <div
+              className="grid gap-px mt-px"
+              style={{ backgroundColor: "var(--border)" }}
+            >
+              <div
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px"
+                style={{ backgroundColor: "var(--border)" }}
               >
-                <div className="aspect-[4/3] w-full overflow-hidden relative bg-slate-100">
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <img
-                    src={owner.image}
-                    alt={owner.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                    loading="lazy"
-                  />
-                  <div className="absolute top-4 left-4 z-20">
-                    <Badge className="bg-white/90 backdrop-blur-sm text-slate-900 hover:bg-white border-none shadow-sm capitalize tracking-wide font-semibold text-xs">
-                      {owner.category}
-                    </Badge>
-                  </div>
-                </div>
-
-                <div className="p-6 md:p-8 flex-1 flex flex-col">
-                  <div className="flex justify-between items-start gap-4 mb-4">
-                    <div>
-                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-violet-600 transition-colors line-clamp-1 mb-1">
-                        {owner.businessName}
-                      </h3>
-                      <p className="text-sm font-medium text-slate-500">
-                        by {owner.name}
-                      </p>
-                    </div>
-                  </div>
-
-                  <p className="text-slate-600 line-clamp-2 text-sm leading-relaxed mb-6 flex-1">
-                    {owner.description}
-                  </p>
-
-                  <div className="flex items-center justify-between pt-4 border-t border-violet-100 mt-auto">
-                    <div className="flex items-center gap-1.5 text-sm text-slate-600 font-medium">
-                      <MapPin className="h-4 w-4 text-violet-400" />
-                      <span className="truncate max-w-[120px]">
-                        {owner.city}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1.5 bg-violet-50 text-violet-700 px-2 py-1 rounded-lg text-sm font-bold">
-                      <Star className="h-3.5 w-3.5 fill-violet-600 text-violet-600" />
-                      <span>{owner.rating}</span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+                {(hasFilters || p > 1 ? owners : rest).map((owner, i) => (
+                  <DirectoryCard key={owner.id} owner={owner} index={i} />
+                ))}
+              </div>
+            </div>
+          </>
         )}
 
-        {/* Pagination Controls (Client Component) */}
         <Pagination totalPages={totalPages} currentPage={p} />
+      </section>
+    </div>
+  );
+}
+
+function FeaturedCard({ owner }: { owner: Owner }) {
+  return (
+    <Link
+      href={`/owner/${owner.slug || owner.id}`}
+      className="group block mb-px overflow-hidden"
+      style={{ backgroundColor: "var(--card)" }}
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-2">
+        {/* Image — tall editorial crop */}
+        <div className="relative overflow-hidden" style={{ aspectRatio: "16/9", minHeight: "280px" }}>
+          <img
+            src={owner.image}
+            alt={owner.name}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+            loading="eager"
+          />
+          <div
+            className="absolute inset-0"
+            style={{ background: "linear-gradient(to right, transparent 60%, var(--card))" }}
+          />
+          {/* Category tag — bottom left */}
+          <div className="absolute bottom-4 left-4">
+            <span
+              className="text-xs font-bold uppercase tracking-widest px-2.5 py-1"
+              style={{
+                backgroundColor: "var(--primary)",
+                color: "var(--primary-foreground)",
+              }}
+            >
+              {owner.category}
+            </span>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div
+          className="flex flex-col justify-between p-8 lg:p-12"
+          style={{ backgroundColor: "var(--card)" }}
+        >
+          <div>
+            <p
+              className="text-xs font-bold uppercase tracking-[0.25em] mb-4"
+              style={{ color: "var(--primary)" }}
+            >
+              Editor&apos;s Pick
+            </p>
+            <h3
+              className="font-display font-bold mb-3 group-hover:opacity-80 transition-opacity"
+              style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", color: "var(--foreground)", lineHeight: 1.1 }}
+            >
+              {owner.businessName}
+            </h3>
+            <p className="text-sm font-medium mb-4" style={{ color: "var(--muted-foreground)" }}>
+              by {owner.name}
+            </p>
+            <p
+              className="text-sm leading-relaxed mb-8"
+              style={{ color: "var(--muted-foreground)" }}
+            >
+              {owner.description}
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1.5 text-sm font-medium" style={{ color: "var(--muted-foreground)" }}>
+                <MapPin className="h-3.5 w-3.5" style={{ color: "var(--primary)" }} />
+                {owner.city}
+              </div>
+              <div
+                className="flex items-center gap-1 text-sm font-bold"
+                style={{ color: "var(--foreground)" }}
+              >
+                <Star className="h-3.5 w-3.5" style={{ color: "var(--primary)", fill: "var(--primary)" }} />
+                {owner.rating}
+              </div>
+            </div>
+            <div
+              className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider transition-opacity group-hover:opacity-60"
+              style={{ color: "var(--primary)" }}
+            >
+              View Profile
+              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+            </div>
+          </div>
+        </div>
       </div>
+    </Link>
+  );
+}
+
+function DirectoryCard({ owner, index }: { owner: Owner; index: number }) {
+  /* Alternate: every 5th card (index 4) is wide — creates rhythm in the grid */
+  return (
+    <Link
+      href={`/owner/${owner.slug || owner.id}`}
+      className="group flex flex-col overflow-hidden transition-colors"
+      style={{ backgroundColor: "var(--card)" }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.backgroundColor = "var(--secondary)";
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.backgroundColor = "var(--card)";
+      }}
+    >
+      {/* Image */}
+      <div className="overflow-hidden" style={{ aspectRatio: "3/2" }}>
+        <img
+          src={owner.image}
+          alt={owner.name}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+          loading="lazy"
+        />
+      </div>
+
+      {/* Content */}
+      <div className="flex flex-col flex-1 p-5">
+        {/* Category */}
+        <p
+          className="text-[10px] font-bold uppercase tracking-[0.25em] mb-2"
+          style={{ color: "var(--primary)" }}
+        >
+          {owner.category}
+        </p>
+
+        {/* Title */}
+        <h3
+          className="font-display font-bold mb-1 line-clamp-2 leading-tight"
+          style={{ fontSize: "1.05rem", color: "var(--foreground)" }}
+        >
+          {owner.businessName}
+        </h3>
+        <p className="text-xs font-medium mb-3" style={{ color: "var(--muted-foreground)" }}>
+          {owner.name}
+        </p>
+
+        <p
+          className="text-xs leading-relaxed line-clamp-2 flex-1 mb-4"
+          style={{ color: "var(--muted-foreground)" }}
+        >
+          {owner.description}
+        </p>
+
+        {/* Footer */}
+        <div
+          className="flex items-center justify-between pt-3"
+          style={{ borderTop: "1px solid var(--border)" }}
+        >
+          <div className="flex items-center gap-1 text-xs font-medium" style={{ color: "var(--muted-foreground)" }}>
+            <MapPin className="h-3 w-3" style={{ color: "var(--primary)" }} />
+            <span className="truncate max-w-[100px]">{owner.city}</span>
+          </div>
+          <div className="flex items-center gap-1 text-xs font-bold" style={{ color: "var(--foreground)" }}>
+            <Star className="h-3 w-3" style={{ color: "var(--primary)", fill: "var(--primary)" }} />
+            {owner.rating}
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+function EmptyState() {
+  return (
+    <div
+      className="py-24 text-center border"
+      style={{ borderColor: "var(--border)", backgroundColor: "var(--card)" }}
+    >
+      <p
+        className="font-display font-bold text-2xl mb-3"
+        style={{ color: "var(--foreground)" }}
+      >
+        No results found
+      </p>
+      <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>
+        Try adjusting your search — or browse all categories.
+      </p>
     </div>
   );
 }

@@ -22,38 +22,74 @@ export function Pagination({
   };
 
   return (
-    <div className="mt-12 flex justify-center items-center gap-2">
-      <button
+    <div
+      className="mt-16 pt-6 flex justify-center items-center gap-0"
+      style={{ borderTop: "1px solid var(--border)" }}
+    >
+      <PagBtn
         onClick={() => navigateToPage(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
-        className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 disabled:opacity-50 transition-colors"
       >
-        Previous
-      </button>
+        ← Prev
+      </PagBtn>
 
-      <div className="flex gap-1">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <button
-            key={page}
-            onClick={() => navigateToPage(page)}
-            className={`w-9 h-9 rounded-xl text-sm font-medium transition-all ${
-              currentPage === page
-                ? "bg-blue-600 text-white shadow-md shadow-blue-500/30"
-                : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
-            }`}
-          >
-            {page}
-          </button>
-        ))}
-      </div>
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        <PagBtn
+          key={page}
+          onClick={() => navigateToPage(page)}
+          active={currentPage === page}
+        >
+          {page}
+        </PagBtn>
+      ))}
 
-      <button
+      <PagBtn
         onClick={() => navigateToPage(Math.min(totalPages, currentPage + 1))}
         disabled={currentPage === totalPages}
-        className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 disabled:opacity-50 transition-colors"
       >
-        Next
-      </button>
+        Next →
+      </PagBtn>
     </div>
+  );
+}
+
+function PagBtn({
+  children,
+  onClick,
+  disabled,
+  active,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  disabled?: boolean;
+  active?: boolean;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className="min-w-[2.75rem] h-10 px-3 text-xs font-bold uppercase tracking-wider transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+      style={{
+        backgroundColor: active ? "var(--primary)" : "transparent",
+        color: active ? "var(--primary-foreground)" : "var(--muted-foreground)",
+        border: "1px solid var(--border)",
+        marginLeft: "-1px",
+        fontFamily: "var(--font-sans)",
+      }}
+      onMouseEnter={(e) => {
+        if (!active && !disabled) {
+          (e.currentTarget as HTMLElement).style.backgroundColor = "var(--secondary)";
+          (e.currentTarget as HTMLElement).style.color = "var(--foreground)";
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!active) {
+          (e.currentTarget as HTMLElement).style.backgroundColor = "transparent";
+          (e.currentTarget as HTMLElement).style.color = "var(--muted-foreground)";
+        }
+      }}
+    >
+      {children}
+    </button>
   );
 }

@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
-import { Input } from "./ui/input";
 import { CATEGORIES } from "@/types/owner";
 import {
   Select,
@@ -28,8 +27,6 @@ export function SearchFilters({
     const params = new URLSearchParams();
     if (query) params.set("q", query);
     if (category && category !== "all") params.set("c", category);
-
-    // Reset page to 1 on new searches
     router.push(`/?${params.toString()}`);
   };
 
@@ -44,24 +41,49 @@ export function SearchFilters({
   };
 
   return (
-    <div className="bg-white p-2 rounded-2xl shadow-xl shadow-slate-200/50 flex flex-col md:flex-row gap-2 max-w-3xl mx-auto border border-slate-100">
-      <div className="relative flex-1 flex items-center bg-slate-50 rounded-xl px-4 transition-colors focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-100">
-        <Search className="h-5 w-5 text-slate-400 mr-2" />
-        <Input
+    <div
+      className="flex flex-col sm:flex-row"
+      style={{ border: "1px solid var(--border)" }}
+    >
+      {/* Search input */}
+      <div
+        className="relative flex-1 flex items-center"
+        style={{ borderRight: "1px solid var(--border)" }}
+      >
+        <Search
+          className="absolute left-4 h-4 w-4 pointer-events-none"
+          style={{ color: "var(--muted-foreground)" }}
+        />
+        <input
           type="text"
-          placeholder="Search by name, business, or city..."
+          placeholder="Search by name, business, or city…"
           value={searchQuery}
           onChange={(e) => handleSearchChange(e.target.value)}
-          className="border-none bg-transparent shadow-none focus-visible:ring-0 text-base"
+          className="w-full py-3.5 pl-11 pr-4 bg-transparent text-sm outline-none placeholder:text-sm"
+          style={{
+            color: "var(--foreground)",
+            fontFamily: "var(--font-sans)",
+          }}
         />
       </div>
 
-      <div className="w-full md:w-64">
+      {/* Category select */}
+      <div className="w-full sm:w-52 shrink-0">
         <Select value={selectedCategory} onValueChange={handleCategoryChange}>
-          <SelectTrigger className="w-full h-full min-h-[3rem] px-4 rounded-xl border-none bg-slate-50 hover:bg-slate-100 transition-colors focus:ring-0">
+          <SelectTrigger
+            className="w-full h-full min-h-[3.25rem] px-4 border-none rounded-none shadow-none text-sm font-medium focus:ring-0"
+            style={{
+              backgroundColor: "var(--secondary)",
+              color: "var(--secondary-foreground)",
+              fontFamily: "var(--font-sans)",
+            }}
+          >
             <SelectValue placeholder="All Categories" />
           </SelectTrigger>
-          <SelectContent className="rounded-xl shadow-xl border-slate-100">
+          <SelectContent
+            className="rounded-none shadow-lg border"
+            style={{ borderColor: "var(--border)" }}
+          >
             <SelectItem value="all">All Categories</SelectItem>
             {CATEGORIES.map((category) => (
               <SelectItem key={category} value={category}>

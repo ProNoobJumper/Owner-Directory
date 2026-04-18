@@ -1,31 +1,35 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Playfair_Display, DM_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { Header } from "@/components/Header";
 import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const playfair = Playfair_Display({
+  variable: "--font-display",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  style: ["normal", "italic"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const dmSans = DM_Sans({
+  variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
   title: {
     template: "%s | Owner Directory",
-    default: "Owner Directory - Discover Exceptional Local Professionals",
+    default: "Owner Directory — Discover Exceptional Indian Professionals",
   },
   description:
-    "Connect with verified businesses and exceptional proprietors in your community.",
+    "Connect with verified businesses and exceptional proprietors across India.",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#ffffff",
+  themeColor: "#fafaf7",
 };
 
 export default function RootLayout({
@@ -34,30 +38,34 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="antialiased">
+    <html lang="en" className="antialiased" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col`}
+        className={`${playfair.variable} ${dmSans.variable} min-h-screen flex flex-col`}
       >
-        <AuthProvider>
-        <Header />
-        <main className="max-w-6xl mx-auto py-8 w-full flex-grow">
-          {children}
-        </main>
-        <footer className="mt-auto border-t border-slate-200 bg-white">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row items-center justify-between text-sm text-slate-500">
-            <p>© {new Date().getFullYear()} BGS. All rights reserved.</p>
-            <div className="flex items-center gap-4 mt-4 md:mt-0">
-              <a href="#" className="hover:text-slate-900 transition-colors">
-                Privacy Policy
-              </a>
-              <a href="#" className="hover:text-slate-900 transition-colors">
-                Terms of Service
-              </a>
-            </div>
-          </div>
-        </footer>
-        <Toaster />
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <Header />
+            <main className="flex-grow w-full">
+              {children}
+            </main>
+            <footer className="border-t border-[var(--border)] bg-[var(--card)]">
+              <div className="max-w-7xl mx-auto px-6 sm:px-8 py-10 flex flex-col md:flex-row items-start justify-between gap-6">
+                <div>
+                  <p className="font-display text-lg font-bold text-[var(--foreground)]">BGS</p>
+                  <p className="text-sm text-[var(--muted-foreground)] mt-1 max-w-xs leading-relaxed">
+                    India&apos;s trusted directory of verified businesses and exceptional proprietors.
+                  </p>
+                </div>
+                <div className="flex items-center gap-6 text-sm text-[var(--muted-foreground)]">
+                  <a href="#" className="hover:text-[var(--foreground)] transition-colors">Privacy Policy</a>
+                  <a href="#" className="hover:text-[var(--foreground)] transition-colors">Terms of Service</a>
+                  <span>© {new Date().getFullYear()} BGS</span>
+                </div>
+              </div>
+            </footer>
+            <Toaster />
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
