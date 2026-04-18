@@ -2,10 +2,9 @@
 
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Pencil } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { api } from "@/lib/api";
 import { OwnerForm } from "@/components/admin/OwnerForm";
-import { Button } from "@/components/ui/button";
 import { Owner } from "@/types/owner";
 import { toast } from "sonner";
 import { RequireAuth } from "@/components/auth/RequireAuth";
@@ -30,10 +29,16 @@ function EditOwnerContent({ id }: { id: string }) {
 
   if (loading) {
     return (
-      <div className="flex justify-center py-24 text-slate-400">
+      <div
+        className="flex justify-center py-24"
+        style={{ color: "var(--muted-foreground)" }}
+      >
         <div className="flex flex-col items-center gap-4">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600"></div>
-          <p className="font-medium">Loading details...</p>
+          <div
+            className="h-7 w-7 animate-spin rounded-full border-2 border-t-transparent"
+            style={{ borderColor: "var(--border)", borderTopColor: "var(--primary)" }}
+          />
+          <p className="text-sm font-medium">Loading details…</p>
         </div>
       </div>
     );
@@ -41,21 +46,34 @@ function EditOwnerContent({ id }: { id: string }) {
 
   if (!owner) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-24 text-center">
-        <div className="bg-white rounded-3xl p-12 shadow-sm border border-slate-100">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">
-            Professional Not Found
+      <div
+        className="max-w-lg mx-auto px-6 py-24 text-center"
+        style={{ backgroundColor: "var(--background)" }}
+      >
+        <div
+          className="p-10"
+          style={{ border: "1px solid var(--border)", backgroundColor: "var(--card)" }}
+        >
+          <h2
+            className="font-display font-bold text-xl mb-3"
+            style={{ color: "var(--foreground)" }}
+          >
+            Entry Not Found
           </h2>
-          <p className="text-slate-500 mb-8">
+          <p className="text-sm mb-6" style={{ color: "var(--muted-foreground)" }}>
             The directory entry you are attempting to edit could not be located.
           </p>
-          <Button
-            variant="outline"
-            className="rounded-full px-8 shadow-sm"
+          <button
             onClick={() => router.push("/admin")}
+            className="px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition-opacity hover:opacity-80"
+            style={{
+              backgroundColor: "var(--primary)",
+              color: "var(--primary-foreground)",
+              fontFamily: "var(--font-sans)",
+            }}
           >
             Return to Dashboard
-          </Button>
+          </button>
         </div>
       </div>
     );
@@ -75,33 +93,43 @@ function EditOwnerContent({ id }: { id: string }) {
   };
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto py-8">
-      <div className="mb-8">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => router.push("/admin")}
-          className="text-slate-500 hover:text-slate-900 gap-2 mb-6"
+    <div
+      className="px-6 sm:px-8 max-w-3xl mx-auto pt-10 pb-20"
+      style={{ backgroundColor: "var(--background)" }}
+    >
+      <button
+        onClick={() => router.push("/admin")}
+        className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest mb-8 transition-colors"
+        style={{ color: "var(--muted-foreground)", fontFamily: "var(--font-sans)" }}
+        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--foreground)"; }}
+        onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--muted-foreground)"; }}
+      >
+        <ArrowLeft className="h-3.5 w-3.5" />
+        Back to Dashboard
+      </button>
+
+      <div
+        className="mb-8 pb-6"
+        style={{ borderBottom: "1px solid var(--border)" }}
+      >
+        <p
+          className="text-xs font-bold uppercase tracking-[0.3em] mb-2"
+          style={{ color: "var(--primary)" }}
         >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Admin Dashboard
-        </Button>
-        <div className="flex items-center gap-3 mb-2">
-          <div className="bg-blue-100 text-blue-600 p-2 rounded-xl">
-            <Pencil className="h-6 w-6" />
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
-            Edit Professional
-          </h1>
-        </div>
-        <p className="text-slate-500 font-medium">
-          Update the directory entry for {owner.businessName}.
+          Edit Entry
+        </p>
+        <h1
+          className="font-display font-black leading-none mb-2"
+          style={{ fontSize: "clamp(1.75rem, 4vw, 2.5rem)", color: "var(--foreground)", letterSpacing: "-0.03em" }}
+        >
+          Edit Professional
+        </h1>
+        <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>
+          Updating the directory entry for {owner.businessName}.
         </p>
       </div>
 
-      <div className="bg-white rounded-3xl p-6 sm:p-10 shadow-lg shadow-slate-200/40 border border-slate-100">
-        <OwnerForm initialData={owner} onSubmit={handleSubmit} />
-      </div>
+      <OwnerForm initialData={owner} onSubmit={handleSubmit} />
     </div>
   );
 }

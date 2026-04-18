@@ -1,7 +1,7 @@
 "use client";
 
 import { Phone, Mail, Globe, MapPin, Navigation } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface ContactSidebarProps {
   phone: string;
@@ -26,42 +26,65 @@ export function ContactSidebar({
 }: ContactSidebarProps) {
   const fullAddress = `${address}, ${city}, ${state} ${zipCode}`;
 
+  const copyToClipboard = async (text: string, label: string) => {
+    await navigator.clipboard.writeText(text);
+    toast.success(`${label} copied`);
+  };
+
+  const sectionStyle: React.CSSProperties = {
+    border: "1px solid var(--border)",
+    backgroundColor: "var(--card)",
+  };
+
+  const rowStyle: React.CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    gap: "1rem",
+    padding: "0.875rem 0",
+    borderBottom: "1px solid var(--border)",
+    color: "var(--foreground)",
+    cursor: "pointer",
+    transition: "color 0.15s",
+  };
+
   return (
     <div className="flex flex-col gap-6">
-      {/* Contact Card */}
-      <div className="bg-white rounded-3xl p-8 shadow-lg shadow-slate-200/40 border border-slate-100">
-        <h3 className="text-lg font-bold text-slate-900 mb-6">
-          Contact Information
-        </h3>
-        <div className="space-y-5">
+      {/* Contact section */}
+      <div style={sectionStyle}>
+        <div
+          className="px-6 py-4"
+          style={{ borderBottom: "1px solid var(--border)", backgroundColor: "var(--secondary)" }}
+        >
+          <p className="text-xs font-bold uppercase tracking-[0.25em]" style={{ color: "var(--muted-foreground)" }}>
+            Contact Information
+          </p>
+        </div>
+
+        <div className="px-6">
           <button
             type="button"
-            onClick={() => {
-              navigator.clipboard.writeText(phone);
-              alert("Phone number copied to clipboard!");
-            }}
-            className="flex items-center gap-4 text-slate-600 hover:text-blue-600 transition-colors group w-full text-left cursor-pointer"
-            title="Click to copy phone number"
+            onClick={() => copyToClipboard(phone, "Phone")}
+            className="w-full text-left group"
+            style={rowStyle}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--primary)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--foreground)"; }}
+            title="Click to copy"
           >
-            <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors">
-              <Phone className="h-5 w-5" />
-            </div>
-            <span className="font-medium">{phone}</span>
+            <Phone className="h-4 w-4 shrink-0" style={{ color: "var(--primary)" }} />
+            <span className="text-sm font-medium">{phone}</span>
           </button>
 
           <button
             type="button"
-            onClick={() => {
-              navigator.clipboard.writeText(email);
-              alert("Email copied to clipboard!");
-            }}
-            className="flex items-center gap-4 text-slate-600 hover:text-blue-600 transition-colors group w-full text-left cursor-pointer"
-            title="Click to copy email"
+            onClick={() => copyToClipboard(email, "Email")}
+            className="w-full text-left"
+            style={rowStyle}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--primary)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--foreground)"; }}
+            title="Click to copy"
           >
-            <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors">
-              <Mail className="h-5 w-5" />
-            </div>
-            <span className="font-medium break-all">{email}</span>
+            <Mail className="h-4 w-4 shrink-0" style={{ color: "var(--primary)" }} />
+            <span className="text-sm font-medium break-all">{email}</span>
           </button>
 
           {website && (
@@ -69,63 +92,90 @@ export function ContactSidebar({
               href={website}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-4 text-slate-600 hover:text-blue-600 transition-colors group"
+              className="flex items-center gap-4 text-sm font-medium transition-colors"
+              style={{ ...rowStyle, borderBottom: "none" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--primary)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--foreground)"; }}
             >
-              <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors">
-                <Globe className="h-5 w-5" />
-              </div>
-              <span className="font-medium break-all">Visit Website</span>
+              <Globe className="h-4 w-4 shrink-0" style={{ color: "var(--primary)" }} />
+              Visit Website
             </a>
           )}
+          {!website && <div style={{ height: "0.25rem" }} />}
         </div>
-        <a href={`tel:${phone}`} className="block w-full mt-8">
-          <Button className="w-full rounded-xl py-6 text-base font-semibold shadow-md shadow-blue-600/20 group">
-            <Phone className="mr-2 h-5 w-5 group-hover:animate-pulse" />
-            Contact Now
-          </Button>
-        </a>
+
+        {/* CTA */}
+        <div className="px-6 pb-6">
+          <a href={`tel:${phone}`} className="block">
+            <button
+              className="w-full py-3 text-xs font-bold uppercase tracking-widest transition-opacity hover:opacity-85"
+              style={{
+                backgroundColor: "var(--primary)",
+                color: "var(--primary-foreground)",
+                fontFamily: "var(--font-sans)",
+              }}
+            >
+              <Phone className="inline h-3.5 w-3.5 mr-2" />
+              Contact Now
+            </button>
+          </a>
+        </div>
       </div>
 
-      {/* Location Card */}
-      <div className="bg-white rounded-3xl p-8 shadow-lg shadow-slate-200/40 border border-slate-100">
-        <h3 className="text-lg font-bold text-slate-900 mb-6">Location</h3>
-        <div className="flex items-start gap-4 text-slate-600">
-          <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center shrink-0">
-            <MapPin className="h-5 w-5 text-slate-400" />
-          </div>
-          <div className="pt-2 font-medium leading-relaxed">
-            <p className="text-slate-900">{address}</p>
-            <p>
-              {city}, {state} {zipCode}
-            </p>
-          </div>
-        </div>
-        <a
-          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block w-full mt-6"
+      {/* Location section */}
+      <div style={sectionStyle}>
+        <div
+          className="px-6 py-4"
+          style={{ borderBottom: "1px solid var(--border)", backgroundColor: "var(--secondary)" }}
         >
-          <Button
-            variant="outline"
-            className="w-full rounded-xl group hover:border-slate-300"
+          <p className="text-xs font-bold uppercase tracking-[0.25em]" style={{ color: "var(--muted-foreground)" }}>
+            Location
+          </p>
+        </div>
+        <div className="px-6 py-5">
+          <div className="flex items-start gap-3 mb-5">
+            <MapPin className="h-4 w-4 mt-0.5 shrink-0" style={{ color: "var(--primary)" }} />
+            <div className="text-sm font-medium leading-relaxed" style={{ color: "var(--foreground)" }}>
+              <p>{address}</p>
+              <p style={{ color: "var(--muted-foreground)" }}>
+                {city}, {state} {zipCode}
+              </p>
+            </div>
+          </div>
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`}
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            <Navigation className="mr-2 h-4 w-4 text-slate-400 group-hover:text-slate-600" />
-            Get Directions
-          </Button>
-        </a>
+            <button
+              className="w-full py-2.5 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest transition-colors"
+              style={{
+                border: "1px solid var(--border)",
+                backgroundColor: "transparent",
+                color: "var(--foreground)",
+                fontFamily: "var(--font-sans)",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.borderColor = "var(--primary)";
+                (e.currentTarget as HTMLElement).style.color = "var(--primary)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+                (e.currentTarget as HTMLElement).style.color = "var(--foreground)";
+              }}
+            >
+              <Navigation className="h-3.5 w-3.5" />
+              Get Directions
+            </button>
+          </a>
+        </div>
       </div>
 
-      {/* Meta Info */}
-      <div className="text-center">
-        <p className="text-sm font-medium text-slate-400">
-          Member since{" "}
-          {new Date(createdAt).toLocaleDateString("en-US", {
-            month: "long",
-            year: "numeric",
-          })}
-        </p>
-      </div>
+      {/* Meta */}
+      <p className="text-xs text-center font-medium" style={{ color: "var(--muted-foreground)" }}>
+        Member since{" "}
+        {new Date(createdAt).toLocaleDateString("en-IN", { month: "long", year: "numeric" })}
+      </p>
     </div>
   );
 }

@@ -144,11 +144,23 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
     onSubmit(data);
   };
 
+  const sectionHeadingStyle: React.CSSProperties = {
+    fontSize: "0.65rem",
+    fontWeight: 700,
+    textTransform: "uppercase",
+    letterSpacing: "0.25em",
+    color: "var(--primary)",
+    marginBottom: "1rem",
+    paddingBottom: "0.5rem",
+    borderBottom: "1px solid var(--border)",
+    fontFamily: "var(--font-sans)",
+  };
+
   return (
-    <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-8">
       {/* Personal Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Personal Information</h3>
+        <h3 style={sectionHeadingStyle}>Personal Information</h3>
 
         <div>
           <Label htmlFor="name">Owner Name *</Label>
@@ -161,7 +173,7 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
             placeholder="John Doe"
           />
           {errors.name && (
-            <p className="text-sm text-red-600 mt-1">{errors.name.message}</p>
+            <p className="text-xs mt-1 font-medium" style={{ color: "var(--destructive)" }}>{errors.name.message}</p>
           )}
         </div>
 
@@ -180,7 +192,7 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
             placeholder="john@example.com"
           />
           {errors.email && (
-            <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>
+            <p className="text-xs mt-1 font-medium" style={{ color: "var(--destructive)" }}>{errors.email.message}</p>
           )}
         </div>
 
@@ -199,14 +211,14 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
             maxLength={10}
           />
           {errors.phone && (
-            <p className="text-sm text-red-600 mt-1">{errors.phone.message}</p>
+            <p className="text-xs mt-1 font-medium" style={{ color: "var(--destructive)" }}>{errors.phone.message}</p>
           )}
         </div>
       </div>
 
       {/* Business Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Business Information</h3>
+        <h3 style={sectionHeadingStyle}>Business Information</h3>
 
         <div>
           <Label htmlFor="businessName">Business Name *</Label>
@@ -219,7 +231,7 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
             placeholder="ABC Company"
           />
           {errors.businessName && (
-            <p className="text-sm text-red-600 mt-1">{errors.businessName.message}</p>
+            <p className="text-xs mt-1 font-medium" style={{ color: "var(--destructive)" }}>{errors.businessName.message}</p>
           )}
         </div>
 
@@ -254,7 +266,7 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
             rows={4}
           />
           {errors.description && (
-            <p className="text-sm text-red-600 mt-1">{errors.description.message}</p>
+            <p className="text-xs mt-1 font-medium" style={{ color: "var(--destructive)" }}>{errors.description.message}</p>
           )}
         </div>
 
@@ -271,14 +283,14 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
             placeholder="https://example.com"
           />
           {errors.website && (
-            <p className="text-sm text-red-600 mt-1">{errors.website.message}</p>
+            <p className="text-xs mt-1 font-medium" style={{ color: "var(--destructive)" }}>{errors.website.message}</p>
           )}
         </div>
       </div>
 
       {/* Address Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Address Information</h3>
+        <h3 style={sectionHeadingStyle}>Address Information</h3>
 
         <div>
           <Label htmlFor="address">Street Address *</Label>
@@ -288,7 +300,7 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
             placeholder="45 MG Road, Andheri West"
           />
           {errors.address && (
-            <p className="text-sm text-red-600 mt-1">{errors.address.message}</p>
+            <p className="text-xs mt-1 font-medium" style={{ color: "var(--destructive)" }}>{errors.address.message}</p>
           )}
         </div>
 
@@ -315,7 +327,7 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
             </Select>
             <input type="hidden" {...register('state', { required: 'State is required' })} />
             {errors.state && (
-              <p className="text-sm text-red-600 mt-1">{errors.state.message}</p>
+              <p className="text-xs mt-1 font-medium" style={{ color: "var(--destructive)" }}>{errors.state.message}</p>
             )}
           </div>
 
@@ -339,7 +351,7 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
             </Select>
             <input type="hidden" {...register('city', { required: 'City is required' })} />
             {errors.city && (
-              <p className="text-sm text-red-600 mt-1">{errors.city.message}</p>
+              <p className="text-xs mt-1 font-medium" style={{ color: "var(--destructive)" }}>{errors.city.message}</p>
             )}
           </div>
         </div>
@@ -359,14 +371,14 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
             maxLength={6}
           />
           {errors.zipCode && (
-            <p className="text-sm text-red-600 mt-1">{errors.zipCode.message}</p>
+            <p className="text-xs mt-1 font-medium" style={{ color: "var(--destructive)" }}>{errors.zipCode.message}</p>
           )}
         </div>
       </div>
 
       {/* Additional Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Additional Information</h3>
+        <h3 style={sectionHeadingStyle}>Additional Information</h3>
 
         <div>
           <div className="flex items-center justify-between mb-1">
@@ -403,7 +415,7 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
             />
           ) : (
             <div
-              className="border-2 border-dashed border-violet-300 rounded-xl p-6 text-center cursor-pointer hover:border-violet-500 hover:bg-violet-50 transition-colors"
+              className="p-6 text-center cursor-pointer transition-colors" style={{ border: '2px dashed var(--border)', backgroundColor: 'var(--secondary)' }}
               onClick={() => fileInputRef.current?.click()}
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {
@@ -428,19 +440,19 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
                 <div className="space-y-2">
                   <img src={imageUrl} alt="Preview" className="h-24 mx-auto rounded-lg object-cover" />
                   <p className="text-green-600 text-xs font-medium">Uploaded successfully</p>
-                  <p className="text-slate-400 text-xs">Click to replace</p>
+                  <p className="text-xs" style={{ color: "var(--muted-foreground)" }}>Click to replace</p>
                 </div>
               ) : (
                 <div className="space-y-1">
-                  <p className="text-slate-500 text-sm">Click or drag & drop</p>
-                  <p className="text-slate-400 text-xs">PNG, JPG, GIF — max 5MB</p>
+                  <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>Click or drag & drop</p>
+                  <p className="text-xs" style={{ color: "var(--muted-foreground)" }}>PNG, JPG, GIF — max 5MB</p>
                 </div>
               )}
             </div>
           )}
 
-          {uploadError && <p className="text-sm text-red-600 mt-1">{uploadError}</p>}
-          {errors.image && <p className="text-sm text-red-600 mt-1">{errors.image.message}</p>}
+          {uploadError && <p className="text-xs mt-1 font-medium" style={{ color: "var(--destructive)" }}>{uploadError}</p>}
+          {errors.image && <p className="text-xs mt-1 font-medium" style={{ color: "var(--destructive)" }}>{errors.image.message}</p>}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -461,7 +473,7 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
               placeholder="4.5"
             />
             {errors.rating && (
-              <p className="text-sm text-red-600 mt-1">{errors.rating.message}</p>
+              <p className="text-xs mt-1 font-medium" style={{ color: "var(--destructive)" }}>{errors.rating.message}</p>
             )}
           </div>
 
@@ -479,17 +491,25 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
               placeholder="100"
             />
             {errors.reviewCount && (
-              <p className="text-sm text-red-600 mt-1">{errors.reviewCount.message}</p>
+              <p className="text-xs mt-1 font-medium" style={{ color: "var(--destructive)" }}>{errors.reviewCount.message}</p>
             )}
           </div>
         </div>
       </div>
 
-      {/* Submit Button */}
-      <div className="flex gap-4 pt-4">
-        <Button type="submit" className="flex-1">
+      {/* Submit */}
+      <div className="pt-6" style={{ borderTop: "1px solid var(--border)" }}>
+        <button
+          type="submit"
+          className="w-full py-3 text-xs font-bold uppercase tracking-widest transition-opacity hover:opacity-85"
+          style={{
+            backgroundColor: "var(--primary)",
+            color: "var(--primary-foreground)",
+            fontFamily: "var(--font-sans)",
+          }}
+        >
           {initialData ? 'Update Owner' : 'Create Owner'}
-        </Button>
+        </button>
       </div>
     </form>
   );

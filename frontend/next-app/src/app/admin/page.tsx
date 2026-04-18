@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Plus, Pencil, Trash2, Eye, LayoutGrid, Star, ShieldAlert } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, Star, ShieldAlert } from "lucide-react";
 import { api } from "@/lib/api";
 import { Owner } from "@/types/owner";
-import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,7 +17,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
 import { RequireAuth } from "@/components/auth/RequireAuth";
 import { useAuth } from "@/context/AuthContext";
 
@@ -57,159 +55,206 @@ function AdminOwnerListContent() {
 
   if (loading) {
     return (
-      <div className="flex justify-center py-24 text-slate-400">
+      <div
+        className="flex justify-center py-24"
+        style={{ color: "var(--muted-foreground)" }}
+      >
         <div className="flex flex-col items-center gap-4">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600"></div>
-          <p className="font-medium">Loading records...</p>
+          <div
+            className="h-7 w-7 animate-spin rounded-full border-2 border-t-transparent"
+            style={{ borderColor: "var(--border)", borderTopColor: "var(--primary)" }}
+          />
+          <p className="text-sm font-medium">Loading records…</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto pb-20">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+    <div
+      className="px-6 sm:px-8 max-w-7xl mx-auto pb-20 pt-10"
+      style={{ backgroundColor: "var(--background)" }}
+    >
+      {/* Page header */}
+      <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 mb-8 pb-6"
+        style={{ borderBottom: "1px solid var(--border)" }}
+      >
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <div className="bg-blue-100 text-blue-600 p-1.5 rounded-lg shadow-sm">
-              <LayoutGrid className="w-5 h-5" />
-            </div>
-            <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
-              Admin Dashboard
-            </h1>
-          </div>
-          <p className="text-slate-500 font-medium">
+          <p
+            className="text-xs font-bold uppercase tracking-[0.3em] mb-2"
+            style={{ color: "var(--primary)" }}
+          >
+            Management
+          </p>
+          <h1
+            className="font-display font-black leading-none mb-2"
+            style={{ fontSize: "clamp(1.75rem, 4vw, 2.5rem)", color: "var(--foreground)", letterSpacing: "-0.03em" }}
+          >
+            Admin Dashboard
+          </h1>
+          <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>
             Manage the provider directory entries.
           </p>
         </div>
         <div className="flex items-center gap-3">
           {!isAdmin && (
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-sm text-amber-700 font-medium">
+            <div
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider"
+              style={{
+                color: "var(--primary)",
+                border: "1px solid var(--primary)",
+                backgroundColor: "transparent",
+              }}
+            >
               <ShieldAlert className="h-3.5 w-3.5" />
               View Only
             </div>
           )}
           {isAdmin && (
             <Link href="/admin/add">
-              <Button className="rounded-full px-6 shadow-md shadow-blue-600/20 font-semibold gap-2 transition-transform hover:-translate-y-0.5">
-                <Plus className="h-4 w-4" />
+              <button
+                className="flex items-center gap-2 px-5 py-2.5 text-xs font-bold uppercase tracking-widest transition-opacity hover:opacity-85"
+                style={{
+                  backgroundColor: "var(--primary)",
+                  color: "var(--primary-foreground)",
+                  fontFamily: "var(--font-sans)",
+                }}
+              >
+                <Plus className="h-3.5 w-3.5" />
                 Add New Professional
-              </Button>
+              </button>
             </Link>
           )}
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl shadow-lg shadow-slate-200/40 border border-slate-100 overflow-hidden">
+      {/* Table */}
+      <div
+        className="overflow-hidden"
+        style={{ border: "1px solid var(--border)", backgroundColor: "var(--card)" }}
+      >
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 text-sm font-semibold tracking-wide">
-                <th className="p-5 pl-8">Business Name</th>
-                <th className="p-5">Owner</th>
-                <th className="p-5">Category</th>
-                <th className="p-5 hidden md:table-cell">Location</th>
-                <th className="p-5 hidden sm:table-cell">Rating</th>
-                <th className="p-5 pr-8 text-right">Actions</th>
+              <tr style={{ backgroundColor: "var(--secondary)", borderBottom: "1px solid var(--border)" }}>
+                {["Business Name", "Owner", "Category", "Location", "Rating", "Actions"].map((h, i) => (
+                  <th
+                    key={h}
+                    className={`py-3.5 text-xs font-bold uppercase tracking-widest ${i === 0 ? "pl-6 pr-4" : i === 5 ? "pr-6 pl-4 text-right" : "px-4"} ${i === 3 ? "hidden md:table-cell" : i === 4 ? "hidden sm:table-cell" : ""}`}
+                    style={{ color: "var(--muted-foreground)" }}
+                  >
+                    {h}
+                  </th>
+                ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
-              {owners.map((owner) => (
+            <tbody>
+              {owners.map((owner, idx) => (
                 <tr
                   key={owner.id}
-                  className="hover:bg-slate-50/80 transition-colors"
+                  style={{
+                    borderBottom: idx < owners.length - 1 ? "1px solid var(--border)" : "none",
+                    backgroundColor: "var(--card)",
+                  }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = "var(--secondary)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = "var(--card)"; }}
                 >
-                  <td className="p-5 pl-8">
-                    <div className="font-bold text-slate-900">
+                  <td className="py-4 pl-6 pr-4">
+                    <div className="font-bold text-sm" style={{ color: "var(--foreground)" }}>
                       {owner.businessName}
                     </div>
-                    <div className="text-sm text-slate-500 hidden md:block truncate max-w-[200px]">
+                    <div className="text-xs mt-0.5 hidden md:block truncate max-w-[180px]" style={{ color: "var(--muted-foreground)" }}>
                       {owner.email}
                     </div>
                   </td>
-                  <td className="p-5">
-                    <div className="font-medium text-slate-700">
+                  <td className="py-4 px-4">
+                    <div className="text-sm font-medium" style={{ color: "var(--foreground)" }}>
                       {owner.name}
                     </div>
                   </td>
-                  <td className="p-5">
-                    <Badge
-                      variant="secondary"
-                      className="bg-blue-50 text-blue-700 hover:bg-blue-100 border-none font-semibold"
+                  <td className="py-4 px-4">
+                    <span
+                      className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5"
+                      style={{
+                        backgroundColor: "var(--accent)",
+                        color: "var(--accent-foreground)",
+                      }}
                     >
                       {owner.category}
-                    </Badge>
+                    </span>
                   </td>
-                  <td className="p-5 hidden md:table-cell text-slate-600 text-sm font-medium">
+                  <td className="py-4 px-4 hidden md:table-cell text-sm font-medium" style={{ color: "var(--muted-foreground)" }}>
                     {owner.city}, {owner.state}
                   </td>
-                  <td className="p-5 hidden sm:table-cell">
-                    <div className="flex items-center gap-1.5 font-bold text-slate-700">
-                      <span>{owner.rating}</span>
-                      <Star className="h-3.5 w-3.5 fill-blue-500 text-blue-500" />
+                  <td className="py-4 px-4 hidden sm:table-cell">
+                    <div className="flex items-center gap-1 text-sm font-bold" style={{ color: "var(--foreground)" }}>
+                      {owner.rating}
+                      <Star className="h-3 w-3" style={{ fill: "var(--primary)", color: "var(--primary)" }} />
                     </div>
                   </td>
-                  <td className="p-5 pr-8">
-                    <div className="flex justify-end gap-2 text-slate-400">
+                  <td className="py-4 pr-6 pl-4">
+                    <div className="flex justify-end gap-1">
                       <Link href={`/owner/${owner.slug || owner.id}`}>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-9 w-9 p-0 rounded-xl hover:bg-slate-100 hover:text-slate-900"
-                          title="View Details"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                        <IconBtn title="View">
+                          <Eye className="h-3.5 w-3.5" />
+                        </IconBtn>
                       </Link>
                       {isAdmin && (
                         <>
                           <Link href={`/admin/edit/${owner.id}`}>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-9 w-9 p-0 rounded-xl hover:bg-blue-50 hover:text-blue-600"
-                              title="Edit Record"
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
+                            <IconBtn title="Edit">
+                              <Pencil className="h-3.5 w-3.5" />
+                            </IconBtn>
                           </Link>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-9 w-9 p-0 rounded-xl hover:bg-red-50 hover:text-red-600 focus:text-red-600"
-                                title="Delete Record"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
+                              <IconBtn title="Delete" danger>
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </IconBtn>
                             </AlertDialogTrigger>
-                            <AlertDialogContent className="rounded-3xl border-none shadow-2xl p-8 max-w-md">
-                              <AlertDialogHeader className="mb-6">
-                                <AlertDialogTitle className="text-2xl font-bold text-slate-900">
+                            <AlertDialogContent
+                              className="border p-0 overflow-hidden max-w-sm"
+                              style={{
+                                backgroundColor: "var(--card)",
+                                borderColor: "var(--border)",
+                                borderRadius: 0,
+                                boxShadow: "0 20px 60px -10px oklch(0 0 0 / 0.4)",
+                              }}
+                            >
+                              <div
+                                className="h-0.5 w-full"
+                                style={{ backgroundColor: "var(--destructive)" }}
+                              />
+                              <AlertDialogHeader className="p-7 pb-4">
+                                <AlertDialogTitle
+                                  className="font-display font-bold text-xl"
+                                  style={{ color: "var(--foreground)" }}
+                                >
                                   Delete Entry?
                                 </AlertDialogTitle>
-                                <AlertDialogDescription className="text-base text-slate-600 mt-2">
-                                  Are you sure you want to remove{" "}
-                                  <strong className="text-slate-900">
-                                    {owner.businessName}
-                                  </strong>
-                                  ? This action cannot be undone and will
-                                  permanently delete this owner&apos;s data from our
-                                  servers.
+                                <AlertDialogDescription
+                                  className="text-sm leading-relaxed"
+                                  style={{ color: "var(--muted-foreground)" }}
+                                >
+                                  Remove <strong style={{ color: "var(--foreground)" }}>{owner.businessName}</strong> permanently. This cannot be undone.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
-                              <AlertDialogFooter className="gap-3 sm:gap-0">
-                                <AlertDialogCancel className="rounded-full px-6 border-slate-200 text-slate-700 font-medium">
+                              <AlertDialogFooter
+                                className="px-7 pb-7 gap-2"
+                                style={{ borderTop: "1px solid var(--border)", paddingTop: "1.25rem", marginTop: "1rem" }}
+                              >
+                                <AlertDialogCancel
+                                  className="rounded-none text-xs font-bold uppercase tracking-wider px-5 h-9"
+                                  style={{ border: "1px solid var(--border)", backgroundColor: "transparent", color: "var(--foreground)" }}
+                                >
                                   Cancel
                                 </AlertDialogCancel>
                                 <AlertDialogAction
-                                  onClick={() =>
-                                    handleDelete(owner.id, owner.businessName)
-                                  }
-                                  className="rounded-full px-6 bg-red-600 text-white hover:bg-red-700 shadow-sm font-semibold"
+                                  onClick={() => handleDelete(owner.id, owner.businessName)}
+                                  className="rounded-none text-xs font-bold uppercase tracking-wider px-5 h-9"
+                                  style={{ backgroundColor: "var(--destructive)", color: "#fff", border: "none" }}
                                 >
-                                  Delete Entry
+                                  Delete
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
@@ -222,14 +267,11 @@ function AdminOwnerListContent() {
               ))}
               {owners.length === 0 && (
                 <tr>
-                  <td
-                    colSpan={6}
-                    className="p-16 text-center text-slate-500 font-medium"
-                  >
-                    <div className="flex flex-col items-center justify-center">
-                      <LayoutGrid className="w-12 h-12 text-slate-200 mb-4" />
-                      <p>No professionals have been added yet.</p>
-                    </div>
+                  <td colSpan={6} className="py-20 text-center" style={{ color: "var(--muted-foreground)" }}>
+                    <p className="font-display font-bold text-lg mb-1" style={{ color: "var(--foreground)" }}>
+                      No entries yet
+                    </p>
+                    <p className="text-sm">Add the first professional to get started.</p>
                   </td>
                 </tr>
               )}
@@ -238,6 +280,37 @@ function AdminOwnerListContent() {
         </div>
       </div>
     </div>
+  );
+}
+
+function IconBtn({
+  children,
+  title,
+  danger,
+  onClick,
+}: {
+  children: React.ReactNode;
+  title?: string;
+  danger?: boolean;
+  onClick?: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      title={title}
+      className="w-8 h-8 flex items-center justify-center transition-colors"
+      style={{ color: "var(--muted-foreground)", backgroundColor: "transparent" }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.backgroundColor = danger ? "oklch(0.97 0.02 27)" : "var(--secondary)";
+        (e.currentTarget as HTMLElement).style.color = danger ? "var(--destructive)" : "var(--foreground)";
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.backgroundColor = "transparent";
+        (e.currentTarget as HTMLElement).style.color = "var(--muted-foreground)";
+      }}
+    >
+      {children}
+    </button>
   );
 }
 
