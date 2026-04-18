@@ -18,17 +18,17 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-violet-200 shadow-sm">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link
             href="/"
             className="flex items-center gap-3 transition-opacity hover:opacity-80"
           >
-            <div className="bg-blue-600 p-2 rounded-xl shadow-inner">
+            <div className="bg-gradient-to-br from-violet-600 to-indigo-600 p-2 rounded-xl shadow-md">
               <Building2 className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold tracking-tight text-slate-900">
+            <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-violet-700 to-indigo-600 bg-clip-text text-transparent">
               Owner Directory
             </span>
           </Link>
@@ -38,10 +38,10 @@ export function Header() {
               <Button
                 variant={!isAdminPage && pathname !== "/login" ? "default" : "ghost"}
                 size="sm"
-                className={`gap-2 rounded-full px-5 transition-all ${!isAdminPage && pathname !== "/login" ? "shadow-md shadow-blue-600/20" : "text-slate-600 hover:text-slate-900"}`}
+                className={`gap-2 rounded-full px-5 transition-all ${!isAdminPage && pathname !== "/login" ? "bg-gradient-to-r from-violet-600 to-indigo-600 shadow-md shadow-violet-500/30 text-white hover:from-violet-700 hover:to-indigo-700" : "text-slate-600 hover:text-violet-700 hover:bg-violet-50"}`}
               >
                 <Home className="h-4 w-4" />
-                <span className="hidden sm:inline font-medium">Directory</span>
+                <span className="hidden sm:inline font-medium">Main Menu</span>
               </Button>
             </Link>
 
@@ -50,7 +50,7 @@ export function Header() {
                 <Button
                   variant={isAdminPage ? "default" : "ghost"}
                   size="sm"
-                  className={`gap-2 rounded-full px-5 transition-all ${isAdminPage ? "shadow-md shadow-blue-600/20" : "text-slate-600 hover:text-slate-900"}`}
+                  className={`gap-2 rounded-full px-5 transition-all ${isAdminPage ? "bg-gradient-to-r from-violet-600 to-indigo-600 shadow-md shadow-violet-500/30 text-white hover:from-violet-700 hover:to-indigo-700" : "text-slate-600 hover:text-violet-700 hover:bg-violet-50"}`}
                 >
                   <LayoutDashboard className="h-4 w-4" />
                   <span className="hidden sm:inline font-medium">Admin</span>
@@ -62,14 +62,14 @@ export function Header() {
               <>
                 {isAuthenticated ? (
                   <div className="flex items-center gap-2 ml-1">
-                    <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-sm">
+                    <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-violet-50 text-sm border border-violet-100">
                       {isAdmin ? (
-                        <ShieldCheck className="h-3.5 w-3.5 text-blue-600" />
+                        <ShieldCheck className="h-3.5 w-3.5 text-violet-600" />
                       ) : (
-                        <User className="h-3.5 w-3.5 text-slate-500" />
+                        <User className="h-3.5 w-3.5 text-violet-400" />
                       )}
-                      <span className="font-semibold text-slate-700">{user?.displayName}</span>
-                      <span className="text-slate-400 text-xs">({user?.role})</span>
+                      <span className="font-semibold text-violet-700">{user?.displayName}</span>
+                      <span className="text-violet-400 text-xs">({user?.role})</span>
                     </div>
                     <Button
                       variant="ghost"
@@ -86,7 +86,7 @@ export function Header() {
                     <Button
                       variant={pathname === "/login" ? "default" : "ghost"}
                       size="sm"
-                      className={`gap-2 rounded-full px-5 transition-all ${pathname === "/login" ? "shadow-md shadow-blue-600/20" : "text-slate-600 hover:text-slate-900"}`}
+                      className={`gap-2 rounded-full px-5 transition-all ${pathname === "/login" ? "bg-gradient-to-r from-violet-600 to-indigo-600 shadow-md shadow-violet-500/30 text-white hover:from-violet-700 hover:to-indigo-700" : "text-slate-600 hover:text-violet-700 hover:bg-violet-50"}`}
                     >
                       <LogIn className="h-4 w-4" />
                       <span className="hidden sm:inline font-medium">Login</span>

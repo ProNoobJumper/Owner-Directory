@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Owner, CATEGORIES } from '../../types/owner';
+import { api } from '../../lib/api';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
@@ -110,8 +111,26 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
 
   const category = watch('category');
   const selectedState = watch('state');
+  const imageUrl = watch('image');
 
   const [cities, setCities] = useState<string[]>([]);
+  const [uploadMode, setUploadMode] = useState<'url' | 'file'>('url');
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = async (file: File) => {
+    setUploading(true);
+    setUploadError('');
+    try {
+      const url = await api.uploadImage(file);
+      setValue('image', url, { shouldValidate: true });
+    } catch {
+      setUploadError('Upload failed. Try again or use a URL instead.');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   useEffect(() => {
     if (selectedState && INDIAN_STATES_AND_CITIES[selectedState]) {
@@ -350,21 +369,78 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
         <h3 className="text-lg font-semibold">Additional Information</h3>
 
         <div>
-          <Label htmlFor="image">Image URL *</Label>
-          <Input
-            id="image"
-            {...register('image', {
-              required: 'Image URL is required',
-              pattern: {
-                value: /^https?:\/\/.+/,
-                message: 'Image URL must start with http:// or https://'
-              }
-            })}
-            placeholder="https://example.com/image.jpg"
+          <div className="flex items-center justify-between mb-1">
+            <Label htmlFor="image">Image *</Label>
+            <div className="flex gap-2 text-xs">
+              <button
+                type="button"
+                onClick={() => setUploadMode('url')}
+                className={`px-2 py-0.5 rounded-full transition-colors ${uploadMode === 'url' ? 'bg-violet-600 text-white' : 'text-slate-500 hover:text-violet-600'}`}
+              >
+                URL
+              </button>
+              <button
+                type="button"
+                onClick={() => setUploadMode('file')}
+                className={`px-2 py-0.5 rounded-full transition-colors ${uploadMode === 'file' ? 'bg-violet-600 text-white' : 'text-slate-500 hover:text-violet-600'}`}
+              >
+                Upload
+              </button>
+            </div>
+          </div>
+
+          <input
+            type="hidden"
+            {...register('image', { required: 'Image is required' })}
           />
-          {errors.image && (
-            <p className="text-sm text-red-600 mt-1">{errors.image.message}</p>
+
+          {uploadMode === 'url' ? (
+            <Input
+              id="image"
+              value={imageUrl || ''}
+              onChange={(e) => setValue('image', e.target.value, { shouldValidate: true })}
+              placeholder="https://example.com/image.jpg"
+            />
+          ) : (
+            <div
+              className="border-2 border-dashed border-violet-300 rounded-xl p-6 text-center cursor-pointer hover:border-violet-500 hover:bg-violet-50 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                const file = e.dataTransfer.files[0];
+                if (file) handleFileUpload(file);
+              }}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/gif"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFileUpload(file);
+                }}
+              />
+              {uploading ? (
+                <p className="text-violet-600 text-sm font-medium">Uploading...</p>
+              ) : imageUrl && uploadMode === 'file' && imageUrl.startsWith('/uploads') ? (
+                <div className="space-y-2">
+                  <img src={imageUrl} alt="Preview" className="h-24 mx-auto rounded-lg object-cover" />
+                  <p className="text-green-600 text-xs font-medium">Uploaded successfully</p>
+                  <p className="text-slate-400 text-xs">Click to replace</p>
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  <p className="text-slate-500 text-sm">Click or drag & drop</p>
+                  <p className="text-slate-400 text-xs">PNG, JPG, GIF — max 5MB</p>
+                </div>
+              )}
+            </div>
           )}
+
+          {uploadError && <p className="text-sm text-red-600 mt-1">{uploadError}</p>}
+          {errors.image && <p className="text-sm text-red-600 mt-1">{errors.image.message}</p>}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

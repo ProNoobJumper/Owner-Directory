@@ -39,13 +39,13 @@ export default async function Home({
       <div className="text-center py-16 md:py-24 max-w-3xl mx-auto">
         <Badge
           variant="outline"
-          className="mb-6 rounded-full px-4 py-1.5 shadow-sm text-blue-600 bg-blue-50 border-blue-200"
+          className="mb-6 rounded-full px-4 py-1.5 shadow-sm text-violet-700 bg-violet-50 border-violet-300"
         >
           Trusted Business Network
         </Badge>
         <h1 className="text-4xl md:text-6xl font-bold text-slate-900 tracking-tight leading-tight mb-6">
           Discover Exceptional Local{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-pink-500">
             Professionals
           </span>
         </h1>
@@ -70,9 +70,9 @@ export default async function Home({
         </div>
 
         {owners.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-3xl border border-slate-100 shadow-sm">
-            <div className="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="w-8 h-8 text-slate-400" />
+          <div className="text-center py-20 bg-white rounded-3xl border border-violet-100 shadow-sm">
+            <div className="bg-violet-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Search className="w-8 h-8 text-violet-400" />
             </div>
             <h3 className="text-xl font-bold text-slate-900 mb-2">
               No professionals found
@@ -87,7 +87,7 @@ export default async function Home({
               <Link
                 href={`/owner/${owner.slug || owner.id}`}
                 key={owner.id}
-                className="group flex flex-col bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 overflow-hidden hover:-translate-y-1"
+                className="group flex flex-col bg-white rounded-3xl border border-violet-100 shadow-sm hover:shadow-xl hover:shadow-violet-200/50 transition-all duration-300 overflow-hidden hover:-translate-y-1"
               >
                 <div className="aspect-[4/3] w-full overflow-hidden relative bg-slate-100">
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -107,7 +107,7 @@ export default async function Home({
                 <div className="p-6 md:p-8 flex-1 flex flex-col">
                   <div className="flex justify-between items-start gap-4 mb-4">
                     <div>
-                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1 mb-1">
+                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-violet-600 transition-colors line-clamp-1 mb-1">
                         {owner.businessName}
                       </h3>
                       <p className="text-sm font-medium text-slate-500">
@@ -120,15 +120,15 @@ export default async function Home({
                     {owner.description}
                   </p>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-100 mt-auto">
+                  <div className="flex items-center justify-between pt-4 border-t border-violet-100 mt-auto">
                     <div className="flex items-center gap-1.5 text-sm text-slate-600 font-medium">
-                      <MapPin className="h-4 w-4 text-slate-400" />
+                      <MapPin className="h-4 w-4 text-violet-400" />
                       <span className="truncate max-w-[120px]">
                         {owner.city}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1.5 bg-blue-50 text-blue-700 px-2 py-1 rounded-lg text-sm font-bold">
-                      <Star className="h-3.5 w-3.5 fill-blue-600 text-blue-600" />
+                    <div className="flex items-center gap-1.5 bg-violet-50 text-violet-700 px-2 py-1 rounded-lg text-sm font-bold">
+                      <Star className="h-3.5 w-3.5 fill-violet-600 text-violet-600" />
                       <span>{owner.rating}</span>
                     </div>
                   </div>
