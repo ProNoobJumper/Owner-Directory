@@ -7,6 +7,24 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Wand2 } from 'lucide-react';
+
+const DEMO_DATA = {
+  name: 'Rajesh Kumar',
+  businessName: 'Kumar Electronics & Repairs',
+  category: 'ELECTRICIAN',
+  description: 'Premier electronics repair and installation service in Bangalore with over 15 years of experience. Specialising in home appliances, commercial wiring, and solar panel installations. Certified and insured professionals available 24/7 for emergency calls.',
+  email: 'rajesh@kumarelectronics.in',
+  phone: '9845012345',
+  address: '12 Brigade Road, Ashok Nagar',
+  city: 'Bangalore',
+  state: 'Karnataka',
+  zipCode: '560025',
+  image: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+  website: 'https://kumarelectronics.in',
+  rating: 4.7,
+  reviewCount: 128,
+};
 
 const INDIAN_STATES_AND_CITIES: Record<string, string[]> = {
   'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur', 'Nellore', 'Tirupati', 'Kakinada', 'Rajahmundry', 'Anantapur', 'Kurnool', 'Eluru'],
@@ -512,7 +530,36 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
       </div>
 
       {/* Submit */}
-      <div className="pt-6" style={{ borderTop: "1px solid var(--border)" }}>
+      <div className="pt-6 space-y-3" style={{ borderTop: "1px solid var(--border)" }}>
+
+        {!initialData && (
+          <button
+            type="button"
+            onClick={() => {
+              Object.entries(DEMO_DATA).forEach(([key, value]) => {
+                setValue(key as keyof FormData, value as never, { shouldValidate: true });
+              });
+            }}
+            className="w-full py-3 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest transition-colors"
+            style={{
+              backgroundColor: "var(--secondary)",
+              color: "var(--muted-foreground)",
+              border: "1px solid var(--border)",
+              fontFamily: "var(--font-sans)",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.borderColor = "var(--primary)";
+              (e.currentTarget as HTMLElement).style.color = "var(--foreground)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+              (e.currentTarget as HTMLElement).style.color = "var(--muted-foreground)";
+            }}
+          >
+            <Wand2 className="h-3.5 w-3.5" />
+            Fill Demo Data
+          </button>
+        )}
 
         <button
           type="submit"
