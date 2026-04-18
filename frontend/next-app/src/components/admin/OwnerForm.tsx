@@ -12,7 +12,7 @@ import { Wand2 } from 'lucide-react';
 const DEMO_DATA = {
   name: 'Rajesh Kumar',
   businessName: 'Kumar Electronics & Repairs',
-  category: 'ELECTRICIAN',
+  category: 'Technology',
   description: 'Premier electronics repair and installation service in Bangalore with over 15 years of experience. Specialising in home appliances, commercial wiring, and solar panel installations. Certified and insured professionals available 24/7 for emergency calls.',
   email: 'rajesh@kumarelectronics.in',
   phone: '9845012345',
@@ -132,6 +132,7 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
   const imageUrl = watch('image');
 
   const [cities, setCities] = useState<string[]>([]);
+  const [pendingCity, setPendingCity] = useState<string | null>(null);
   const [uploadMode, setUploadMode] = useState<'url' | 'file'>('url');
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
@@ -152,11 +153,16 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
 
   useEffect(() => {
     if (selectedState && INDIAN_STATES_AND_CITIES[selectedState]) {
-      setCities(INDIAN_STATES_AND_CITIES[selectedState]);
+      const stateCities = INDIAN_STATES_AND_CITIES[selectedState];
+      setCities(stateCities);
+      if (pendingCity && stateCities.includes(pendingCity)) {
+        setValue('city', pendingCity, { shouldValidate: true });
+        setPendingCity(null);
+      }
     } else {
       setCities([]);
     }
-  }, [selectedState]);
+  }, [selectedState, pendingCity, setValue]);
 
   const onFormSubmit = (data: FormData) => {
     onSubmit(data);
@@ -536,9 +542,11 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
           <button
             type="button"
             onClick={() => {
-              Object.entries(DEMO_DATA).forEach(([key, value]) => {
+              const { city, ...rest } = DEMO_DATA;
+              Object.entries(rest).forEach(([key, value]) => {
                 setValue(key as keyof FormData, value as never, { shouldValidate: true });
               });
+              setPendingCity(city);
             }}
             className="w-full py-3 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest transition-colors"
             style={{
