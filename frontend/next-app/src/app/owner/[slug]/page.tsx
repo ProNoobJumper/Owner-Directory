@@ -48,10 +48,8 @@ export default async function OwnerPage({ params }: Props) {
         <div className="max-w-7xl mx-auto px-6 sm:px-8 py-4 flex items-center justify-between">
           <Link
             href="/"
-            className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest transition-colors"
+            className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest transition-colors hover:text-[var(--foreground)]"
             style={{ color: "var(--muted-foreground)" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--foreground)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--muted-foreground)"; }}
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Directory
