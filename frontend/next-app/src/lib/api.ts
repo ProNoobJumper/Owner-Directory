@@ -31,8 +31,8 @@ export interface PageResponse<T> {
 
 const getApiBaseUrl = () => {
   if (typeof window === 'undefined') {
-    // Server-side: use internal API_URL if set, otherwise fall back to the public URL
-    const base = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    const raw = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    const base = /^https?:\/\//.test(raw) ? raw : `https://${raw}`;
     return base.replace(/\/$/, '') + '/api';
   }
   return '/api';
