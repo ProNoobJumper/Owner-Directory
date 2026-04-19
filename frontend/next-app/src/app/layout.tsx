@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Header } from "@/components/Header";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { SessionProviderWrapper } from "@/components/SessionProviderWrapper";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -43,6 +44,7 @@ export default function RootLayout({
         className={`${playfair.variable} ${dmSans.variable} min-h-screen flex flex-col`}
       >
         <ThemeProvider>
+          <SessionProviderWrapper>
           <AuthProvider>
             <Header />
             <main className="flex-grow w-full">
@@ -65,6 +67,7 @@ export default function RootLayout({
             </footer>
             <Toaster />
           </AuthProvider>
+          </SessionProviderWrapper>
         </ThemeProvider>
       </body>
     </html>

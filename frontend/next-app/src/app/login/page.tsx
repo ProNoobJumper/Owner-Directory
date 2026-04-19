@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LogIn, Eye, EyeOff, ShieldCheck, User } from "lucide-react";
+import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
@@ -11,7 +12,8 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { login, isAuthenticated } = useAuth();
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const { login, loginWithGoogle, isAuthenticated } = useAuth();
   const router = useRouter();
 
   if (isAuthenticated) {
@@ -170,8 +172,49 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Divider */}
+        {/* OAuth divider */}
         <div style={{ height: "1px", backgroundColor: "var(--border)", margin: "2rem 0 1.5rem" }} />
+
+        {/* Google Sign In */}
+        <button
+          type="button"
+          onClick={async () => {
+            setIsGoogleLoading(true);
+            await loginWithGoogle();
+            setIsGoogleLoading(false);
+          }}
+          disabled={isGoogleLoading || isLoading}
+          className="w-full h-12 flex items-center justify-center gap-3 text-sm font-bold uppercase tracking-widest transition-colors disabled:opacity-60"
+          style={{
+            backgroundColor: "var(--secondary)",
+            border: "1px solid var(--border)",
+            color: "var(--foreground)",
+            fontFamily: "var(--font-sans)",
+          }}
+          onMouseEnter={(e) => { if (!isGoogleLoading) (e.currentTarget as HTMLElement).style.borderColor = "var(--primary)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "var(--border)"; }}
+        >
+          {isGoogleLoading ? (
+            <div
+              className="h-4 w-4 animate-spin rounded-full border-2 border-t-transparent"
+              style={{ borderColor: "var(--foreground)", borderTopColor: "transparent" }}
+            />
+          ) : (
+            <>
+              <Image
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                alt="Google"
+                width={18}
+                height={18}
+                unoptimized
+              />
+              Continue with Google
+            </>
+          )}
+        </button>
+
+        {/* Divider */}
+        <div style={{ height: "1px", backgroundColor: "var(--border)", margin: "1.5rem 0" }} />
 
         {/* Demo credentials */}
         <div>

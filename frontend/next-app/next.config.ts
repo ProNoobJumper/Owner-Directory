@@ -4,6 +4,12 @@ const rawBackendUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080
 const backendUrl = /^https?:\/\//.test(rawBackendUrl) ? rawBackendUrl : `https://${rawBackendUrl}`;
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      { hostname: "www.gstatic.com" },
+      { hostname: "lh3.googleusercontent.com" },
+    ],
+  },
   async rewrites() {
     return [
       {
