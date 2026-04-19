@@ -11,7 +11,7 @@ interface ContactSidebarProps {
   city: string;
   state: string;
   zipCode: string;
-  createdAt: string;
+  memberSince: string;
 }
 
 export function ContactSidebar({
@@ -22,7 +22,7 @@ export function ContactSidebar({
   city,
   state,
   zipCode,
-  createdAt,
+  memberSince,
 }: ContactSidebarProps) {
   const fullAddress = `${address}, ${city}, ${state} ${zipCode}`;
 
@@ -173,8 +173,7 @@ export function ContactSidebar({
 
       {/* Meta */}
       <p className="text-xs text-center font-medium" style={{ color: "var(--muted-foreground)" }}>
-        Member since{" "}
-        {new Date(createdAt).toLocaleDateString("en-IN", { month: "long", year: "numeric" })}
+        Member since {memberSince}
       </p>
     </div>
   );

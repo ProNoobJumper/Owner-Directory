@@ -153,7 +153,7 @@ export default async function OwnerPage({ params }: Props) {
             city={owner.city}
             state={owner.state}
             zipCode={owner.zipCode}
-            createdAt={owner.createdAt}
+            memberSince={new Date(owner.createdAt + "Z").toLocaleDateString("en-IN", { month: "long", year: "numeric" })}
           />
         </div>
       </div>
