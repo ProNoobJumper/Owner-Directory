@@ -15,10 +15,13 @@ spring:
 app:
   solr:
     url: ${SOLR_URL:http://localhost:8983/solr}
-  upload:
-    dir: ${UPLOAD_DIR:./uploads}
   cors:
     allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
+
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME}
+  api-key: ${CLOUDINARY_API_KEY}
+  api-secret: ${CLOUDINARY_API_SECRET}
 
 # SECURITY: Actuator endpoint configuration
 management:

@@ -471,7 +471,7 @@ export function OwnerForm({ initialData, onSubmit }: OwnerFormProps) {
               />
               {uploading ? (
                 <p className="text-sm font-medium" style={{ color: "var(--primary)" }}>Uploading...</p>
-              ) : imageUrl && uploadMode === 'file' && imageUrl.startsWith('/uploads') ? (
+              ) : imageUrl && uploadMode === 'file' && imageUrl.startsWith('https://res.cloudinary.com') ? (
                 <div className="space-y-2">
                   <img src={imageUrl} alt="Preview" className="h-24 mx-auto object-cover" />
                   <p className="text-xs font-bold uppercase tracking-wider" style={{ color: "var(--primary)" }}>Uploaded</p>

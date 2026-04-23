@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 // main REST controller - this was the first file I created
 // no doc because I kept meaning to add it and never did lol
@@ -78,13 +77,7 @@ public class OwnerController {
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
-        String filename = imageService.storeFile(file);
-
-        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/uploads/")
-                .path(filename)
-                .toUriString();
-
+        String url = imageService.storeFile(file);
         return ResponseEntity.ok(url);
     }
 }
